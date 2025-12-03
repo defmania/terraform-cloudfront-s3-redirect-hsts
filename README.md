@@ -62,20 +62,20 @@ tofu apply
 CLOUDFRONT_DOMAIN=$(tofu output -raw cloudfront_info | jq -r '.domain_name')
 
 # Test root redirect
-curl -I https://$CLOUDFRONT_DOMAIN/ -H "Host: dev.example.com"
+curl -I https://$CLOUDFRONT_DOMAIN/ -H "Host: example.com"
 
 # Test path preservation
 curl -I https://$CLOUDFRONT_DOMAIN/about/contact?foo=bar \
-  -H "Host: dev.example.com"
+  -H "Host: example.com"
 
 # Verify HSTS header
-curl -I https://$CLOUDFRONT_DOMAIN/ -H "Host: dev.example.com" | grep -i strict
+curl -I https://$CLOUDFRONT_DOMAIN/ -H "Host: example.com" | grep -i strict
 ```
 
 **Expected output:**
 ```
 HTTP/2 301
-location: https://www.dev.example.com/
+location: https://www.example.com/
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 ```
 
@@ -84,13 +84,13 @@ strict-transport-security: max-age=63072000; includeSubDomains; preload
 Manually add these records in Route 53:
 
 - **A Record (IPv4):**
-  - Name: `dev.example.com`
+  - Name: `example.com`
   - Type: `A - IPv4 address`
   - Alias: `Yes`
   - Target: CloudFront distribution domain
 
 - **AAAA Record (IPv6):**
-  - Name: `dev.example.com`
+  - Name: `example.com`
   - Type: `AAAA - IPv6 address`
   - Alias: `Yes`
   - Target: Same CloudFront distribution domain
@@ -98,7 +98,7 @@ Manually add these records in Route 53:
 ### 4. Verify Live
 ```bash
 # Wait 1-2 minutes for DNS propagation
-curl -I https://dev.example.com/
+curl -I https://example.com/
 ```
 
 ## Module Variables
